@@ -1,0 +1,15 @@
+{
+  "name": "aplicacion-web-cursos",
+  "version": "1.0.0",
+  "description": "Aplicacion web de cursos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "author": "raziel",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "nodemon": "^3.1.7"
+  }
+}
