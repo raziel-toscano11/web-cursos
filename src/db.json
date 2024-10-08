@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Raziel Abed Martinez Toscano",
+      "email": "raziel@gmail.com",
+      "password": "raziel"
+    },
+    {
+      "id": 2,
+      "name": "Fernanda Sanchez Martinez",
+      "email": "fernanda@gmail.com",
+      "password": "fernanda"
+    },
+    {
+      "id": 3,
+      "name": "Mariano Arturo Sandoval Ramirez",
+      "email": "mariano@gmail.com",
+      "password": "mariano"
+    }
+  ]
+}
