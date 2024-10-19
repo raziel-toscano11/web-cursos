@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { login, register, profile } from '../controllers/auth.controller.js';
+import { login, register, logout, profile } from '../controllers/auth.controller.js';
 import { validateSchema } from '../middlewares/validator.middleware.js';
-import { registerSchema, loginSchema } from '../schemas/auth.schema.js'
+import { registerSchema, loginSchema } from '../schemas/auth.schema.js';
+import { authRequired } from '../middlewares/validateToken.js';
 
 const router = Router();
 
@@ -11,10 +12,9 @@ router.post('/register', validateSchema(registerSchema), register);
 
 router.post('/login',validateSchema(loginSchema), login);
 
-router.post('/logout', (req, res) => {
-    res.send('Ruta de cierre de sesion');
-});
+router.post('/logout', logout);
 
+router.get('/profile', authRequired, profile);
 
 /* app.post('/login', (req, res) => {
     res.send('Ruta de inicio de sesion');

@@ -19,11 +19,11 @@ const courseSchema = new mongoose.Schema({
     required: true,
   },
   instructor_id: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  students: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   materials: [
     {
       type: {

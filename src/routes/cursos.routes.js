@@ -1,4 +1,7 @@
 import { Router } from "express";
+import { authRequired } from '../middlewares/validateToken.js'
+import { isInstructor } from '../middlewares/validateRole.middleware.js'
+import { getCursos } from '../controllers/cursos.controller.js'
 
 const router = Router();
 
@@ -23,6 +26,10 @@ router.get('cursos/mis-cursos', (req, res) => {
 
 router.get('cursos/:id/seccion/:n', (req, res) => {
     res.send('Ruta que devuelve una seccion especifica de un curso');
+});
+
+router.post('/cursos/create', authRequired, isInstructor, (req, res) => {
+    res.send('OK');
 });
 
 export default router;

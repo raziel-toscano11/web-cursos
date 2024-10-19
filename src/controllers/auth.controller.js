@@ -21,7 +21,7 @@ export const register = async (req, res) => {
 
         const userSaved = await newUser.save();
         const token = await createAccessToken({id: userSaved._id});
-        res.cookie('token', token);
+        //res.cookie('token', token);
         res.json({
             id: userSaved._id,
             name: userSaved.name,
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
         }
 
         const token = await createAccessToken({id: userFound._id});
-        res.cookie('token', token);
+        //res.cookie('token', token);
         res.json({
             id: userFound._id,
             name: userFound.name,
@@ -65,6 +65,13 @@ export const login = async (req, res) => {
     } catch (error) {
         res.status(500).json({message: error.message})
     }
+};
+
+export const logout = (req, res) => {
+    res.cookie('token', '', {
+        expires: new Date(0)
+    })
+    return res.sendStatus(200);
 };
 
 export const profile = async (req, res) => {
@@ -79,7 +86,6 @@ export const profile = async (req, res) => {
         name: userFound.name,
         username: userFound.username,
         email: userFound.email,
-        token,
         createdAt: userFound.createdAt,
         updatedAt: userFound.updatedAt,
     });

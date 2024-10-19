@@ -1,3 +1,1 @@
-curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
-   sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
-   --dearmor
+wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
