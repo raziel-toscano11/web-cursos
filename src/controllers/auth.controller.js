@@ -86,6 +86,7 @@ export const profile = async (req, res) => {
         name: userFound.name,
         username: userFound.username,
         email: userFound.email,
+        rol: userFound.role,
         createdAt: userFound.createdAt,
         updatedAt: userFound.updatedAt,
     });

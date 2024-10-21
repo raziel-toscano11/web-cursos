@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import chapterSchema from "./chapter.model.js"
 
 const courseSchema = new mongoose.Schema({
   title: {
@@ -24,17 +25,7 @@ const courseSchema = new mongoose.Schema({
     required: true,
   },
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  materials: [
-    {
-      type: {
-        type: String,
-        enum: ["video", "image", "document"],
-        required: true,
-      },
-      url: { type: String, required: true },
-      description: String,
-    },
-  ],
+  chapters: [chapterSchema],
 }, { timestamps: true });
 
 export default mongoose.model("Course", courseSchema);

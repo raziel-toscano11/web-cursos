@@ -1,11 +1,16 @@
 import { Router } from "express";
+import { authRequired } from '../middlewares/validateToken.js';
+import { becomeInstructor } from '../controllers/users.controller.js'
+import { profile } from '../controllers/auth.controller.js';
+import { getInstructorCourses } from '../controllers/cursos.controller.js'
 
 const router = Router();
 
+//Rutas sin autenticacion
+router.get('/users/:id/courses', getInstructorCourses)
+
 //Rutas de Usuarios (Estudiante y Profesor)
-router.get('/users/perfil', (req, res) => {
-    res.send('Ruta que devuelve el perfil del usuario logeado');
-});
+router.get('/users/profile', authRequired, profile);//Obtener datos del perfil
 
 router.put('/users/perfil/editar', (req, res) => {
     res.send('Ruta para editar el perfil del usuario logeado');
@@ -16,9 +21,10 @@ router.get('/users/:id', (req, res) => {
 });
 
 //Rutas de Usuarios (Profesor)
-router.post('/cursos', (req, res) => {
-    res.send('Ruta para crear un nuevo curso');
-});
+
+//Dar rol de instructor
+router.post('/users/set-instructor-role', authRequired, becomeInstructor);
+
 
 router.put('/cursos/:id', (req, res) => {
     res.send('Ruta para editar un cursos');
@@ -28,7 +34,7 @@ router.delete('/cursos/:id', (req, res) => {
     res.send('Ruta para eliminar un curso'); //Pendiente a revision
 });
 
-router.get('/users/cursos/creados', (req, res) => {
+router.get('/cursos-creados', (req, res) => {
     res.send('Ruta que duelve los cursos creados por un profesor');
 });
 

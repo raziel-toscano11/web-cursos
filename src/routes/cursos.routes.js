@@ -1,19 +1,18 @@
 import { Router } from "express";
 import { authRequired } from '../middlewares/validateToken.js'
+import { validateSchema } from '../middlewares/validator.middleware.js';
+import { ownsCourse } from '../middlewares/ValidateCourseOwnership.middleware.js'
+import { courseSchema, courseUpdateSchema } from '../schemas/course.schema.js'
 import { isInstructor } from '../middlewares/validateRole.middleware.js'
-import { getCursos } from '../controllers/cursos.controller.js'
+import { getCourses, getCourse, getMyCreatedCourses, createCourse, updateCourse, createChapter } from '../controllers/cursos.controller.js'
 
 const router = Router();
 
 //Rutas de Cursos
 //Rutas que no requieren autenticacion
-router.get('/cursos', (req, res) => {
-    res.send('Ruta que devuelve los cursos disponibles');
-});
+router.get('/courses', getCourses);
 
-router.get('/cursos/:id', (req, res) => {
-    res.send('Ruta que devuelve un curso especifico');
-});
+router.get('/courses/:id', getCourse);
 
 router.get('/planes', (req, res) => {
     res.send('Ruta que devuelve los planes de pago disponibles');
@@ -28,8 +27,20 @@ router.get('cursos/:id/seccion/:n', (req, res) => {
     res.send('Ruta que devuelve una seccion especifica de un curso');
 });
 
-router.post('/cursos/create', authRequired, isInstructor, (req, res) => {
-    res.send('OK');
-});
+//Rutas que requieren autenticacion y rol de instructor
+//Crear un curso nuevo
+router.post('/courses/create',authRequired, isInstructor, validateSchema(courseSchema) ,createCourse);
+
+//Actualizar un curso existente
+router.put('/courses/:id/update', authRequired, isInstructor, ownsCourse, validateSchema(courseUpdateSchema), updateCourse);
+
+//Obtener los cursos creados por el instructor logeado
+router.get('/my-created-courses', authRequired, isInstructor, getMyCreatedCourses);
+
+//Crear capitulos de un curso
+router.post('/courses/:id/create-chapter', authRequired, isInstructor, ownsCourse, createChapter);
+
+//Agregar temas a un capitulo de un curso
+router.post('/courses/:courseId/chapters/:chapterId/add-topic', authRequired, isInstructor, ownsCourse);
 
 export default router;
