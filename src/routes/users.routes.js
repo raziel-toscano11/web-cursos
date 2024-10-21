@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { authRequired } from '../middlewares/validateToken.js';
-import { becomeInstructor } from '../controllers/users.controller.js'
+import { becomeInstructor, updateUserProfile } from '../controllers/users.controller.js'
 import { profile } from '../controllers/auth.controller.js';
 import { getInstructorCourses } from '../controllers/cursos.controller.js'
+import {isProfileOwner} from '../middlewares/validateProfileOwner.middlewares.js'
 
 const router = Router();
 
@@ -12,9 +13,7 @@ router.get('/users/:id/courses', getInstructorCourses)
 //Rutas de Usuarios (Estudiante y Profesor)
 router.get('/users/profile', authRequired, profile);//Obtener datos del perfil
 
-router.put('/users/perfil/editar', (req, res) => {
-    res.send('Ruta para editar el perfil del usuario logeado');
-});
+router.put('/users/profile/:id/editar', authRequired, isProfileOwner, updateUserProfile);
 
 router.get('/users/:id', (req, res) => {
     res.send('Ruta que devuelve el perfil de otro usuario');
