@@ -75,7 +75,7 @@ export const getMyCreatedCourses = async (req, res) => {
 
     if (!courses.length) {
       return res
-        .status(404)
+        .status(200)
         .json({ message: "No has creado ningún curso aún" });
     }
 
