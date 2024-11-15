@@ -4,7 +4,9 @@ import { validateSchema } from '../middlewares/validator.middleware.js';
 import { ownsCourse } from '../middlewares/ValidateCourseOwnership.middleware.js'
 import { courseSchema, courseUpdateSchema } from '../schemas/course.schema.js'
 import { isInstructor } from '../middlewares/validateRole.middleware.js'
-import { getCourses, getCourse, getMyCreatedCourses, createCourse, updateCourse, createChapter } from '../controllers/cursos.controller.js'
+import { getCourses, getCourse, getMyCreatedCourses, createCourse, updateCourse, createChapter, deleteCourse } from '../controllers/cursos.controller.js'
+import upload from '../middlewares/imagesCourses.middleware.js'
+import multerErrorHandler from "../middlewares/multerErrorHandler.middleware.js";
 
 const router = Router();
 
@@ -29,10 +31,12 @@ router.get('cursos/:id/seccion/:n', (req, res) => {
 
 //Rutas que requieren autenticacion y rol de instructor
 //Crear un curso nuevo
-router.post('/courses/create',authRequired, isInstructor, validateSchema(courseSchema) ,createCourse);
+router.post('/courses/create',authRequired, isInstructor, upload.single('image'), multerErrorHandler, validateSchema(courseSchema) ,createCourse);
 
 //Actualizar un curso existente
-router.put('/courses/:id/update', authRequired, isInstructor, ownsCourse, validateSchema(courseUpdateSchema), updateCourse);
+router.put('/courses/:id/update', authRequired, isInstructor, ownsCourse, upload.single('image'), multerErrorHandler, validateSchema(courseUpdateSchema), updateCourse);
+
+router.delete('/courses/:id/delete', authRequired, isInstructor, ownsCourse, deleteCourse);
 
 //Obtener los cursos creados por el instructor logeado
 router.get('/my-created-courses', authRequired, isInstructor, getMyCreatedCourses);

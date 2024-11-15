@@ -1,4 +1,6 @@
 import Course from "../models/courses/course.model.js";
+import fs from "fs";
+import path from "path";
 
 //Obtener todos los cursos disponibles
 export const getCourses = async (req, res) => {
@@ -21,7 +23,7 @@ export const getCourse = async (req, res) => {
     const { id } = req.params;
     const course = await Course.findById(id).populate(
       "instructor_id",
-      "name username"
+      "name username _id"
     );
 
     if (!course) {
@@ -95,13 +97,14 @@ export const createCourse = async (req, res) => {
     return res.status(400).json({ message: "Todos los campos son requeridos" });
   }
   try {
-    //Creamos una nueva instancia de Course
+    const image = req.file ? `/uploads/courses/${req.file.filename}` : null; // Ruta de la imagen
     const newCourse = new Course({
       title,
       description,
       price,
       category,
       instructor_id,
+      image,
     });
 
     //Guardamos el nuevo curso en la base de datos
@@ -116,7 +119,7 @@ export const createCourse = async (req, res) => {
   }
 };
 
-//Actualizar un curso existente
+// Actualizar un curso existente
 export const updateCourse = async (req, res) => {
   const { id } = req.params;
   const { title, description, price, category } = req.body;
@@ -128,10 +131,27 @@ export const updateCourse = async (req, res) => {
       return res.status(404).json({ message: "Curso no encontrado" });
     }
 
+    // Actualizar campos enviados en el body
     if (title) course.title = title;
     if (description) course.description = description;
     if (price) course.price = price;
     if (category) course.category = category;
+
+    // Actualizar la imagen si se envió un nuevo archivo
+    if (req.file) {
+      // Elimina la imagen anterior del servidor
+      if (course.image) {
+        const previousImagePath = path.join(process.cwd(), course.image);
+        fs.unlink(previousImagePath, (err) => {
+          if (err) {
+            console.error("Error al eliminar la imagen anterior:", err.message);
+          }
+        });
+      }
+
+      // Asigna la nueva imagen
+      course.image = `/uploads/courses/${req.file.filename}`;
+    }
 
     const updatedCourse = await course.save();
 
@@ -142,6 +162,7 @@ export const updateCourse = async (req, res) => {
       .json({ message: "Error al actualizar el curso", error: error.message });
   }
 };
+
 
 //Crear capitulos de un curso
 export const createChapter = async (req, res) => {
@@ -219,5 +240,39 @@ export const addTopicToChapter = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error al añadir el tema", error: error.message });
+  }
+};
+
+// Eliminar un curso existente
+export const deleteCourse = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Buscar el curso por ID
+    const course = await Course.findById(id);
+
+    if (!course) {
+      return res.status(404).json({ message: "Curso no encontrado" });
+    }
+
+    // Eliminar la imagen asociada si existe
+    if (course.image) {
+      const imagePath = path.join(process.cwd(), course.image);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("Error al eliminar la imagen del curso:", err.message);
+        }
+      });
+    }
+
+    // Eliminar el curso de la base de datos
+    await course.deleteOne();
+
+    res.status(200).json({ message: "Curso eliminado exitosamente" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al eliminar el curso",
+      error: error.message,
+    });
   }
 };

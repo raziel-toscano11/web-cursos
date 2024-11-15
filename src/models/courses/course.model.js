@@ -14,6 +14,7 @@ const courseSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: true,
+    set: (v) => parseFloat(v),
   },
   category: {
     type: String,
@@ -22,6 +23,10 @@ const courseSchema = new mongoose.Schema({
   instructor_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+  image: {
+    type: String, // Ruta de la imagen
     required: true,
   },
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

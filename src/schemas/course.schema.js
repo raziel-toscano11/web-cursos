@@ -11,11 +11,11 @@ export const courseSchema = z.object({
     required_error: "La descripción es requerida",
   }),
 
-  price: z.number({
+  price: z.preprocess((val) => parseFloat(val), z.number({
     required_error: "El precio es requerido",
   }).positive({
     message: "El precio debe ser un número positivo",
-  }),
+  })),
 
   category: z.string({
     required_error: "La categoría es requerida",
